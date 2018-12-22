@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2013
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+'''
+Created on 12.02.2013
+
+@author: ajazdzewski
+'''
+import sys
+from common import config
+from common import env
+from common import rados
+
+if __name__ == '__main__':
+    conf = config.config('storage.conf')
+    enviroment = env.env()
+    rbd = rados.rbd()
+
+    if enviroment.get('EXTP_ORIGINPOOL') is None:
+        originpool = conf.originpool
+    else:
+        originpool = enviroment.get('EXTP_ORIGINPOOL')
+
+    if enviroment.get('EXTP_ORIGIN') is not None:
+        ret = rbd.clone(enviroment.get('VOL_NAME'), enviroment.get(
+            'VOL_SIZE'), enviroment.get('EXTP_ORIGIN'), originpool, conf.pool)
+    else:
+        ret = rbd.create(enviroment.get('VOL_NAME'),
+                         enviroment.get('VOL_SIZE'), conf.pool)
+
+    if ret is True:
+        sys.exit(0)
+    else:
+        sys.exit(1)
