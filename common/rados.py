@@ -117,7 +117,8 @@ class RBD(object):
             if self.isMapped(name, pool) is False:
                 return False
 
-        sys.stdout.write(self.isMapped(name, pool)['dev'])
+        sys.stdout.write("%s\nrbd:%s/%s" %
+                         (self.isMapped(name, pool)['dev'], pool, name))
         return True
 
     def unmap(self, name, pool='rbd'):
